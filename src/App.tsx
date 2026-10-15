@@ -11,6 +11,7 @@ import { BookCoachModal } from './components/BookCoachModal';
 import { PremiumModal } from './components/PremiumModal';
 import { ProfileModal } from './components/ProfileModal';
 import { LogSportModal } from './components/LogSportModal';
+import { AirQualityPM25Modal } from './components/AirQualityPM25Modal';
 import { Coach, SingaporeSport, WeightLossProfile, WorkoutLogEntry } from './types';
 import { COACHES_DATA } from './data/coachesData';
 
@@ -72,6 +73,7 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isPremiumOpen, setIsPremiumOpen] = useState(false);
   const [isLogSportOpen, setIsLogSportOpen] = useState(false);
+  const [isAirQualityOpen, setIsAirQualityOpen] = useState(false);
   const [selectedSportForLogging, setSelectedSportForLogging] = useState<SingaporeSport | undefined>();
   const [selectedCoachForBooking, setSelectedCoachForBooking] = useState<Coach | null>(null);
 
@@ -150,6 +152,7 @@ export default function App() {
             onLogWorkout={handleLogWorkout}
             onUpdateProfile={handleUpdateProfile}
             onOpenLogModal={handleOpenLogModal}
+            onOpenAirQuality={() => setIsAirQualityOpen(true)}
           />
         )}
 
@@ -160,6 +163,7 @@ export default function App() {
             onOpenScan={() => setIsScanOpen(true)}
             onOpenBookCoach={() => handleSelectCoach(COACHES_DATA[0])}
             onOpenLogSport={() => handleOpenLogModal()}
+            onOpenAirQuality={() => setIsAirQualityOpen(true)}
             onUpdateProfile={handleUpdateProfile}
           />
         )}
@@ -227,6 +231,12 @@ export default function App() {
         profile={profile}
         onLogWorkout={handleLogWorkout}
         onUpdateProfile={handleUpdateProfile}
+      />
+
+      {/* Singapore Air Quality PM2.5 & LTA Transit Modal */}
+      <AirQualityPM25Modal
+        isOpen={isAirQualityOpen}
+        onClose={() => setIsAirQualityOpen(false)}
       />
     </div>
   );

@@ -8,6 +8,7 @@ interface TodayScreenProps {
   onOpenScan: () => void;
   onOpenBookCoach: () => void;
   onOpenLogSport: () => void;
+  onOpenAirQuality: () => void;
   onUpdateProfile: (updated: Partial<WeightLossProfile>) => void;
 }
 
@@ -17,6 +18,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
   onOpenScan,
   onOpenBookCoach,
   onOpenLogSport,
+  onOpenAirQuality,
   onUpdateProfile,
 }) => {
   // Energy Balance calculations
@@ -41,10 +43,19 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
             Today's Metabolic HUD
           </h1>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="font-mono text-[11px] text-[#c3f400] font-bold">31°C Feels like 36°C</span>
-          <span className="font-mono text-[9px] text-[#bacbb9]">PSI: 32 (Good for PCN)</span>
-        </div>
+        <button
+          onClick={onOpenAirQuality}
+          className="flex flex-col items-end p-1.5 rounded-xl bg-[#181c22] border border-[#3c4a3d]/60 hover:border-[#6fff9a] transition-all cursor-pointer text-right group"
+          title="Click to view live PM2.5 and LTA DataMall Telemetry"
+        >
+          <div className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[13px] text-[#6fff9a] group-hover:scale-110 transition-transform">
+              air
+            </span>
+            <span className="font-mono text-[11px] text-[#6fff9a] font-bold">PM2.5: 12 µg/m³</span>
+          </div>
+          <span className="font-mono text-[9px] text-[#bacbb9]">Band I • Good for PCN Run</span>
+        </button>
       </div>
 
       {/* Main Biometric Deficit HUD Ring Card */}

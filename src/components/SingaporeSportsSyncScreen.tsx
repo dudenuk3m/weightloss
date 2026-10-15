@@ -14,6 +14,7 @@ interface SingaporeSportsSyncScreenProps {
   onLogWorkout: (entry: WorkoutLogEntry) => void;
   onUpdateProfile: (updated: Partial<WeightLossProfile>) => void;
   onOpenLogModal: (sport?: SingaporeSport) => void;
+  onOpenAirQuality?: () => void;
 }
 
 export const SingaporeSportsSyncScreen: React.FC<SingaporeSportsSyncScreenProps> = ({
@@ -22,6 +23,7 @@ export const SingaporeSportsSyncScreen: React.FC<SingaporeSportsSyncScreenProps>
   onLogWorkout,
   onUpdateProfile,
   onOpenLogModal,
+  onOpenAirQuality,
 }) => {
   const [selectedYear, setSelectedYear] = useState<string>('2025');
   const [sortMode, setSortMode] = useState<'popularity' | 'burnRate' | 'deficitTime'>('popularity');
@@ -225,6 +227,37 @@ export const SingaporeSportsSyncScreen: React.FC<SingaporeSportsSyncScreenProps>
             </span>
             <span>{isSyncingLive ? 'Syncing...' : 'Sync ActiveSG'}</span>
           </button>
+        </div>
+      </div>
+
+      {/* Live Singapore PM2.5 & Transit Telemetry Strip */}
+      <div
+        onClick={onOpenAirQuality}
+        className="p-3 rounded-2xl bg-gradient-to-r from-[#181c22] via-[#10141a] to-[#181c22] border border-[#10e575]/40 flex items-center justify-between cursor-pointer hover:border-[#10e575] transition-all group shadow-md"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#10e575]/15 text-[#10e575] flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-[18px] fill group-hover:scale-110 transition-transform">
+              air
+            </span>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono text-[10px] font-bold text-[#10e575] uppercase tracking-wide">
+                Live PM2.5: 12 µg/m³ (Band I: Normal)
+              </span>
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10e575] animate-pulse"></span>
+            </div>
+            <p className="font-sans text-[11px] text-[#dfe2eb]">
+              Optimal air quality for Outdoor Walking (46%) &amp; ECP Run (25%)
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-[#10e575] font-mono text-[10px] font-bold">
+          <span>View NEA &amp; Transit</span>
+          <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">
+            chevron_right
+          </span>
         </div>
       </div>
 
