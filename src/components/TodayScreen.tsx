@@ -219,42 +219,26 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
         </div>
       </div>
 
-      {/* Quick Action Matrix */}
-      <div className="grid grid-cols-2 gap-2.5">
+      {/* Quick Action */}
+      <div>
         <button
           onClick={onOpenLogSport}
-          className="p-3 rounded-2xl bg-[#181c22] hover:bg-[#1c2026] border border-[#3c4a3d]/60 text-left transition-all group flex flex-col justify-between cursor-pointer"
+          className="w-full p-3.5 rounded-2xl bg-[#181c22] hover:bg-[#1c2026] border border-[#3c4a3d]/60 text-left transition-all group flex items-center justify-between cursor-pointer shadow-md"
         >
-          <div className="flex items-center justify-between">
-            <span className="material-symbols-outlined text-[#6fff9a] text-[22px] group-hover:scale-110 transition-transform">
-              directions_run
-            </span>
-            <span className="material-symbols-outlined text-[16px] text-[#859585]">
-              chevron_right
-            </span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#10e575]/15 text-[#6fff9a] flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">
+                directions_run
+              </span>
+            </div>
+            <div>
+              <h4 className="font-sans text-[14px] font-bold text-[#dfe2eb]">Log Singapore Exercise</h4>
+              <p className="font-mono text-[11px] text-[#bacbb9]">Record Outdoor Walk, Run, Swim &bull; Burn Deficit</p>
+            </div>
           </div>
-          <div className="mt-2">
-            <h4 className="font-sans text-[13px] font-bold text-[#dfe2eb]">Log SG Exercise</h4>
-            <p className="font-mono text-[10px] text-[#bacbb9]">Walking, Running, Swim</p>
-          </div>
-        </button>
-
-        <button
-          onClick={onOpenScan}
-          className="p-3 rounded-2xl bg-[#181c22] hover:bg-[#1c2026] border border-[#3c4a3d]/60 text-left transition-all group flex flex-col justify-between cursor-pointer"
-        >
-          <div className="flex items-center justify-between">
-            <span className="material-symbols-outlined text-[#c3f400] text-[22px] fill group-hover:scale-110 transition-transform">
-              photo_camera
-            </span>
-            <span className="material-symbols-outlined text-[16px] text-[#859585]">
-              chevron_right
-            </span>
-          </div>
-          <div className="mt-2">
-            <h4 className="font-sans text-[13px] font-bold text-[#dfe2eb]">AI Food &amp; Macro</h4>
-            <p className="font-mono text-[10px] text-[#bacbb9]">Hawker Meal Computer Vision</p>
-          </div>
+          <span className="material-symbols-outlined text-[20px] text-[#6fff9a] group-hover:translate-x-1 transition-transform">
+            chevron_right
+          </span>
         </button>
       </div>
 

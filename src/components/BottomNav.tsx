@@ -5,13 +5,12 @@ export type NavTab = 'today' | 'trainers' | 'challenges' | 'progress' | 'sg-sync
 interface BottomNavProps {
   currentTab: NavTab;
   onTabChange: (tab: NavTab) => void;
-  onOpenScan: () => void;
+  onOpenScan?: () => void;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
   currentTab,
   onTabChange,
-  onOpenScan,
 }) => {
   return (
     <nav className="fixed bottom-0 w-full z-40 pb-safe bg-[#10141a]/90 backdrop-blur-xl border-t border-[#3c4a3d]/30 shadow-[0_-2px_16px_rgba(0,0,0,0.5)]">
@@ -68,21 +67,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           />
         </button>
 
-        {/* Central AI Scan FAB */}
-        <div className="flex-1 flex flex-col items-center justify-center min-h-[44px] -mt-5">
-          <button
-            onClick={onOpenScan}
-            aria-label="Launch AI Scan"
-            className="flex flex-col items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-[#10e575] to-[#6fff9a] text-[#003918] shadow-[0_0_24px_-2px_rgba(16,229,117,0.5)] active:scale-90 hover:brightness-110 transition-all border-2 border-[#10141a]"
-          >
-            <span className="material-symbols-outlined text-[26px] font-bold fill">
-              photo_camera
-            </span>
-          </button>
-          <span className="font-mono text-[10px] text-[#6fff9a] mt-1 font-bold tracking-wider uppercase">
-            AI Scan
-          </span>
-        </div>
 
         {/* SG Sports Deficit Sync / Challenges */}
         <button
