@@ -16,7 +16,7 @@ import { Coach, SingaporeSport, WeightLossProfile, WorkoutLogEntry } from './typ
 import { COACHES_DATA } from './data/coachesData';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<NavTab>('trainers');
+  const [currentTab, setCurrentTab] = useState<NavTab>('today');
 
   // Initial user weight loss and biometric telemetry profile
   const [profile, setProfile] = useState<WeightLossProfile>({
