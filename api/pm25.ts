@@ -34,7 +34,6 @@ export async function handlePM25(req: Request, res: Response) {
     });
 
     if (!response.ok) {
-      // In case of upstream error or rate limit, return status with details
       const errorText = await response.text();
       return res.status(response.status).json({
         error: true,
@@ -46,7 +45,7 @@ export async function handlePM25(req: Request, res: Response) {
 
     const data = await response.json();
 
-    // Augment with workout safety telemetry for Singapore outdoor sports
+    // Parse readings from the API
     const latestItem = data?.data?.items?.[0] || data?.data?.items?.[data?.data?.items?.length - 1];
     const regionalReadings = latestItem?.readings?.pm25_one_hourly || {};
 
@@ -54,49 +53,91 @@ export async function handlePM25(req: Request, res: Response) {
       if (val <= 12) {
         return {
           band: 'Normal (Band I)',
-          status: 'Good for Outdoor Exercise',
-          recommendation: 'Optimal for outdoor walking along PCN, jogging at Bedok Reservoir & cycling',
+          isSafeToRun: true,
+          safetyLevel: 'SAFE' as const,
+          badgeText: 'SAFE TO RUN OUTDOORS',
+          status: 'Good for Outdoor Cardio',
+          recommendation: 'Optimal conditions for outdoor running, walking along PCN, and cycling.',
+          indoorAlternative: 'Outdoor PCN recommended over treadmill',
           color: '#10e575',
+          indicatorIcon: 'check_circle',
         };
       }
       if (val <= 55) {
         return {
           band: 'Elevated (Band II)',
-          status: 'Moderate',
-          recommendation: 'Acceptable for outdoor sports. Keep hydration high in tropical humidity',
+          isSafeToRun: true,
+          safetyLevel: 'CAUTION' as const,
+          badgeText: 'EXERCISE WITH CAUTION',
+          status: 'Moderate Air Quality',
+          recommendation: 'Safe for running, but reduce tempo sprints. Hydrate frequently in SG heat.',
+          indoorAlternative: 'Outdoor walk or shaded PCN trail',
           color: '#c3f400',
+          indicatorIcon: 'warning',
         };
       }
       if (val <= 150) {
         return {
           band: 'High (Band III)',
+          isSafeToRun: false,
+          safetyLevel: 'UNSAFE' as const,
+          badgeText: 'UNSAFE TO RUN OUTDOORS',
           status: 'Unhealthy for Prolonged Cardio',
-          recommendation: 'Recommend switching to indoor ActiveSG gym or swimming complex',
+          recommendation: 'High PM2.5 particles detected. Avoid outdoor running or intense PCN cardio.',
+          indoorAlternative: 'Switch to indoor ActiveSG gym treadmill or indoor pool',
           color: '#ff9800',
+          indicatorIcon: 'do_not_disturb_on',
         };
       }
       return {
         band: 'Very High (Band IV)',
-        status: 'Hazardous',
-        recommendation: 'Avoid outdoor exercise. Stay in air-conditioned fitness centres',
+        isSafeToRun: false,
+        safetyLevel: 'HAZARDOUS' as const,
+        badgeText: 'HAZARDOUS - DO NOT RUN OUTDOORS',
+        status: 'Hazardous Air Quality',
+        recommendation: 'Strictly avoid outdoor exercise. High risk of cardiovascular and airway irritation.',
+        indoorAlternative: 'Air-conditioned fitness pod or indoor gym only',
         color: '#ff5252',
+        indicatorIcon: 'dangerous',
       };
     };
 
     const regionalTelemetry: Record<string, any> = {};
+    let maxPM25 = 0;
+    let minPM25 = 999;
+    let totalPM25 = 0;
+    let count = 0;
+
     for (const [region, value] of Object.entries(regionalReadings)) {
+      const numVal = Number(value);
+      if (!isNaN(numVal)) {
+        if (numVal > maxPM25) maxPM25 = numVal;
+        if (numVal < minPM25) minPM25 = numVal;
+        totalPM25 += numVal;
+        count++;
+      }
       regionalTelemetry[region] = {
-        value,
+        value: numVal,
         unit: 'µg/m³',
-        ...evaluateAirQuality(Number(value)),
+        ...evaluateAirQuality(numVal),
       };
     }
+
+    const avgPM25 = count > 0 ? Math.round(totalPM25 / count) : 12;
+    const overallSafety = evaluateAirQuality(avgPM25);
 
     res.json({
       success: true,
       timestamp: latestItem?.updatedTimestamp || latestItem?.timestamp || new Date().toISOString(),
       source: 'api-open.data.gov.sg / LTA DataMall',
       hasCustomKey: Boolean(accountKey),
+      overall: {
+        avgValue: avgPM25,
+        maxValue: maxPM25,
+        minValue: minPM25,
+        unit: 'µg/m³',
+        ...overallSafety,
+      },
       regionalReadings: regionalTelemetry,
       raw: data,
     });

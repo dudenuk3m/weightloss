@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { WeightLossProfile, SingaporeSport, WorkoutLogEntry } from '../types';
 import {
   SINGAPORE_SPORTS_SURVEY_DATA,
@@ -29,6 +29,44 @@ export const SingaporeSportsSyncScreen: React.FC<SingaporeSportsSyncScreenProps>
   const [sortMode, setSortMode] = useState<'popularity' | 'burnRate' | 'deficitTime'>('popularity');
   const [isSyncingLive, setIsSyncingLive] = useState(false);
   const [syncSuccessToast, setSyncSuccessToast] = useState<string | null>(null);
+
+  // Live PM2.5 Run Safety Telemetry State
+  const [pm25Info, setPm25Info] = useState<{
+    value: number;
+    isSafeToRun: boolean;
+    badgeText: string;
+    status: string;
+    color: string;
+    indicatorIcon: string;
+    recommendation: string;
+  }>({
+    value: 12,
+    isSafeToRun: true,
+    badgeText: 'SAFE TO RUN OUTDOORS',
+    status: 'Good for Outdoor Cardio',
+    color: '#10e575',
+    indicatorIcon: 'check_circle',
+    recommendation: 'Optimal air quality for Outdoor Walking (46%) & ECP Run (25%)',
+  });
+
+  useEffect(() => {
+    fetch('/api/pm25')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.overall) {
+          setPm25Info({
+            value: json.overall.avgValue || 12,
+            isSafeToRun: json.overall.isSafeToRun,
+            badgeText: json.overall.badgeText,
+            status: json.overall.status,
+            color: json.overall.color,
+            indicatorIcon: json.overall.indicatorIcon,
+            recommendation: json.overall.recommendation,
+          });
+        }
+      })
+      .catch((err) => console.error('Error in SportsSync PM2.5 fetch:', err));
+  }, []);
 
   // Target deficit calculation
   const totalBurnedToday = profile.dailyCaloriesBurnedExercise;
@@ -230,31 +268,49 @@ export const SingaporeSportsSyncScreen: React.FC<SingaporeSportsSyncScreenProps>
         </div>
       </div>
 
-      {/* Live Singapore PM2.5 & Transit Telemetry Strip */}
+      {/* Live Singapore PM2.5 Run Safety Indicator Strip */}
       <div
         onClick={onOpenAirQuality}
-        className="p-3 rounded-2xl bg-gradient-to-r from-[#181c22] via-[#10141a] to-[#181c22] border border-[#10e575]/40 flex items-center justify-between cursor-pointer hover:border-[#10e575] transition-all group shadow-md"
+        className="p-3 rounded-2xl border flex items-center justify-between cursor-pointer transition-all group shadow-md"
+        style={{
+          backgroundColor: `${pm25Info.color}14`,
+          borderColor: `${pm25Info.color}55`,
+        }}
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#10e575]/15 text-[#10e575] flex items-center justify-center shrink-0">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: `${pm25Info.color}25`, color: pm25Info.color }}
+          >
             <span className="material-symbols-outlined text-[18px] fill group-hover:scale-110 transition-transform">
-              air
+              {pm25Info.indicatorIcon}
             </span>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[10px] font-bold text-[#10e575] uppercase tracking-wide">
-                Live PM2.5: 12 µg/m³ (Band I: Normal)
+              <span
+                className="font-mono text-[10px] font-bold uppercase tracking-wide"
+                style={{ color: pm25Info.color }}
+              >
+                PM2.5: {pm25Info.value} µg/m³ &bull; {pm25Info.badgeText}
               </span>
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10e575] animate-pulse"></span>
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ backgroundColor: pm25Info.color }}
+              />
             </div>
-            <p className="font-sans text-[11px] text-[#dfe2eb]">
-              Optimal air quality for Outdoor Walking (46%) &amp; ECP Run (25%)
+            <p className="font-sans text-[11px] text-[#dfe2eb] line-clamp-1">
+              {pm25Info.isSafeToRun
+                ? 'Safe for Outdoor Walking (46%) & ECP Run (25%)'
+                : 'High PM2.5 Alert: Switch outdoor running to indoor ActiveSG gym/pool'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-[#10e575] font-mono text-[10px] font-bold">
-          <span>View NEA &amp; Transit</span>
+        <div
+          className="flex items-center gap-1 font-mono text-[10px] font-bold shrink-0 ml-2"
+          style={{ color: pm25Info.color }}
+        >
+          <span>Check Regions</span>
           <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">
             chevron_right
           </span>

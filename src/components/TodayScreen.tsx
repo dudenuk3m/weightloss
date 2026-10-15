@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { WeightLossProfile } from '../types';
 import { calculateFatLossGrams } from '../data/singaporeSportsData';
 
@@ -21,6 +21,44 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
   onOpenAirQuality,
   onUpdateProfile,
 }) => {
+  // Live PM2.5 Run Safety Telemetry State
+  const [pm25Info, setPm25Info] = useState<{
+    value: number;
+    isSafeToRun: boolean;
+    badgeText: string;
+    status: string;
+    color: string;
+    indicatorIcon: string;
+    recommendation: string;
+  }>({
+    value: 12,
+    isSafeToRun: true,
+    badgeText: 'SAFE TO RUN OUTDOORS',
+    status: 'Good for Outdoor Cardio',
+    color: '#10e575',
+    indicatorIcon: 'check_circle',
+    recommendation: 'Optimal conditions for outdoor running along PCN.',
+  });
+
+  useEffect(() => {
+    fetch('/api/pm25')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.overall) {
+          setPm25Info({
+            value: json.overall.avgValue || 12,
+            isSafeToRun: json.overall.isSafeToRun,
+            badgeText: json.overall.badgeText,
+            status: json.overall.status,
+            color: json.overall.color,
+            indicatorIcon: json.overall.indicatorIcon,
+            recommendation: json.overall.recommendation,
+          });
+        }
+      })
+      .catch((err) => console.error('Error fetching PM2.5 in TodayScreen:', err));
+  }, []);
+
   // Energy Balance calculations
   // Net deficit = (BMR + Exercise Burned) - Consumed
   const totalExpenditure = profile.dailyBasalMetabolicRate + profile.dailyCaloriesBurnedExercise;
@@ -45,17 +83,69 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
         </div>
         <button
           onClick={onOpenAirQuality}
-          className="flex flex-col items-end p-1.5 rounded-xl bg-[#181c22] border border-[#3c4a3d]/60 hover:border-[#6fff9a] transition-all cursor-pointer text-right group"
-          title="Click to view live PM2.5 and LTA DataMall Telemetry"
+          className="flex flex-col items-end p-2 rounded-xl bg-[#181c22] border transition-all cursor-pointer text-right group shadow-sm"
+          style={{ borderColor: `${pm25Info.color}66` }}
+          title="Click to view live PM2.5 Run Safety details"
         >
-          <div className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[13px] text-[#6fff9a] group-hover:scale-110 transition-transform">
-              air
+          <div className="flex items-center gap-1.5">
+            <span
+              className="material-symbols-outlined text-[15px] fill group-hover:scale-110 transition-transform"
+              style={{ color: pm25Info.color }}
+            >
+              {pm25Info.indicatorIcon}
             </span>
-            <span className="font-mono text-[11px] text-[#6fff9a] font-bold">PM2.5: 12 µg/m³</span>
+            <span className="font-mono text-[11px] font-bold" style={{ color: pm25Info.color }}>
+              PM2.5: {pm25Info.value} µg/m³
+            </span>
           </div>
-          <span className="font-mono text-[9px] text-[#bacbb9]">Band I • Good for PCN Run</span>
+          <span
+            className="font-mono text-[9px] font-bold uppercase tracking-wide mt-0.5"
+            style={{ color: pm25Info.color }}
+          >
+            {pm25Info.isSafeToRun ? '🟢 Safe to Run' : '🔴 Unsafe to Run'}
+          </span>
         </button>
+      </div>
+
+      {/* Prominent Run Safety Alert Strip if PM2.5 is elevated or unsafe */}
+      <div
+        onClick={onOpenAirQuality}
+        className="p-3 rounded-2xl border flex items-center justify-between cursor-pointer transition-all shadow-md group"
+        style={{
+          backgroundColor: `${pm25Info.color}14`,
+          borderColor: `${pm25Info.color}55`,
+        }}
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: `${pm25Info.color}25`, color: pm25Info.color }}
+          >
+            <span className="material-symbols-outlined text-[18px] fill">
+              {pm25Info.indicatorIcon}
+            </span>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className="font-mono text-[11px] font-bold uppercase tracking-wider"
+                style={{ color: pm25Info.color }}
+              >
+                {pm25Info.badgeText}
+              </span>
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-ping"
+                style={{ backgroundColor: pm25Info.color }}
+              />
+            </div>
+            <p className="font-sans text-[11px] text-[#dfe2eb] line-clamp-1">
+              {pm25Info.recommendation}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center text-[16px] text-[#dfe2eb] group-hover:translate-x-1 transition-transform">
+          <span className="material-symbols-outlined">chevron_right</span>
+        </div>
       </div>
 
       {/* Main Biometric Deficit HUD Ring Card */}
