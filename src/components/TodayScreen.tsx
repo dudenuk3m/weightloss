@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { WeightLossProfile } from '../types';
 import { calculateFatLossGrams } from '../data/singaporeSportsData';
+import confetti from 'canvas-confetti';
 
 interface TodayScreenProps {
   profile: WeightLossProfile;
@@ -148,73 +149,175 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
         </div>
       </div>
 
-      {/* Main Biometric Deficit HUD Ring Card */}
-      <div className="relative w-full rounded-2xl bg-gradient-to-b from-[#1c2026] via-[#181c22] to-[#10141a] p-4 shadow-xl border border-[#3c4a3d]/70 overflow-hidden">
+      {/* Interactive Weight Logger Card (Replaces Deficit HUD) */}
+      <div className="relative w-full rounded-2xl bg-gradient-to-b from-[#1c2026] via-[#181c22] to-[#10141a] p-4 shadow-xl border border-[#3c4a3d]/70 overflow-hidden space-y-3">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#10e575]/10 rounded-full blur-2xl pointer-events-none"></div>
 
+        {/* Card Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#6fff9a] text-[18px]">
-              local_fire_department
+            <span className="material-symbols-outlined text-[#10e575] text-[20px] fill">
+              scale
             </span>
-            <span className="font-mono text-[11px] font-bold uppercase text-[#dfe2eb]">
-              Daily Deficit Target: -{profile.targetDeficitKcal} kcal
+            <span className="font-mono text-[11px] font-bold uppercase text-[#dfe2eb] tracking-wide">
+              Weight Logger &bull; Morning Telemetry
             </span>
           </div>
-          <span
-            className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded-full ${
-              currentNetDeficit >= profile.targetDeficitKcal
-                ? 'bg-[#10e575]/20 text-[#6fff9a] border border-[#10e575]/40'
-                : 'bg-[#262a31] text-[#c3f400]'
-            }`}
-          >
-            {deficitMetPercent}% Achieved
+          <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#262a31] text-[#c3f400] border border-[#c3f400]/30">
+            Goal: {profile.targetWeightKg} kg
           </span>
         </div>
 
-        {/* Triple Telemetry Dial Grid */}
-        <div className="grid grid-cols-3 gap-2 mt-4 text-center">
-          {/* Calorie Intake */}
-          <div className="p-2.5 rounded-xl bg-[#0a0e14] border border-[#3c4a3d]/40 flex flex-col justify-center">
-            <span className="font-mono text-[9px] text-[#859585] uppercase">Consumed</span>
-            <span className="font-mono text-[18px] font-bold text-[#dfe2eb]">
-              {profile.dailyCaloriesConsumed}
+        {/* Current Weight & Delta Row */}
+        <div className="flex items-baseline justify-between pt-1">
+          <div>
+            <span className="font-mono text-[9px] text-[#859585] uppercase tracking-wider block">
+              Current Recorded Weight
             </span>
-            <span className="font-mono text-[9px] text-[#bacbb9]">/ 1,850 budget</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-mono text-[36px] font-bold text-[#dfe2eb] leading-none">
+                {profile.currentWeightKg}
+              </span>
+              <span className="font-mono text-[14px] text-[#bacbb9]">kg</span>
+              <span className="font-mono text-[11px] font-bold text-[#10e575] bg-[#10e575]/15 px-2 py-0.5 rounded-full ml-1">
+                -{(profile.startingWeightKg - profile.currentWeightKg).toFixed(1)} kg lost
+              </span>
+            </div>
           </div>
-
-          {/* Exercise Burned */}
-          <div className="p-2.5 rounded-xl bg-[#0a0e14] border border-[#3c4a3d]/40 flex flex-col justify-center">
-            <span className="font-mono text-[9px] text-[#859585] uppercase">SG Sports Burn</span>
-            <span className="font-mono text-[18px] font-bold text-[#6fff9a]">
-              +{profile.dailyCaloriesBurnedExercise}
+          <div className="flex flex-col items-end">
+            <span className="font-mono text-[9px] text-[#859585] uppercase tracking-wider block">
+              Remaining to Goal
             </span>
-            <span className="font-mono text-[9px] text-[#c3f400]">
-              ~{calculateFatLossGrams(profile.dailyCaloriesBurnedExercise)}g fat
-            </span>
-          </div>
-
-          {/* Net Deficit */}
-          <div className="p-2.5 rounded-xl bg-[#0a0e14] border border-[#3c4a3d]/40 flex flex-col justify-center">
-            <span className="font-mono text-[9px] text-[#859585] uppercase">Net Deficit</span>
             <span className="font-mono text-[18px] font-bold text-[#c3f400]">
-              -{currentNetDeficit}
+              {(profile.currentWeightKg - profile.targetWeightKg).toFixed(1)} kg
             </span>
-            <span className="font-mono text-[9px] text-[#87f5ff]">Total Burn - In</span>
+            <span className="font-mono text-[9px] text-[#87f5ff]">
+              ~{Math.round(((profile.startingWeightKg - profile.currentWeightKg) / (profile.startingWeightKg - profile.targetWeightKg)) * 100)}% achieved
+            </span>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-3 space-y-1">
-          <div className="w-full h-2 bg-[#0a0e14] rounded-full overflow-hidden border border-[#3c4a3d]/40">
+        {/* Quick Stepper & Direct Log Input Form */}
+        <div className="p-3 rounded-xl bg-[#0a0e14] border border-[#3c4a3d]/50 space-y-2.5">
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#bacbb9]">
+            <span className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10e575]"></span>
+              Log New Weigh-In
+            </span>
+            <span className="text-[10px] text-[#859585]">Auto-syncs InBody curve</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Decrement buttons */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = Math.max(40, parseFloat((profile.currentWeightKg - 0.1).toFixed(1)));
+                onUpdateProfile({ currentWeightKg: next, xpPoints: profile.xpPoints + 15 });
+              }}
+              className="w-9 h-9 rounded-xl bg-[#181c22] hover:bg-[#262a31] text-[#dfe2eb] font-mono text-[12px] font-bold border border-[#3c4a3d]/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              title="-0.1 kg"
+            >
+              -0.1
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const next = Math.max(40, parseFloat((profile.currentWeightKg - 0.5).toFixed(1)));
+                onUpdateProfile({ currentWeightKg: next, xpPoints: profile.xpPoints + 25 });
+              }}
+              className="w-9 h-9 rounded-xl bg-[#181c22] hover:bg-[#262a31] text-[#dfe2eb] font-mono text-[12px] font-bold border border-[#3c4a3d]/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              title="-0.5 kg"
+            >
+              -0.5
+            </button>
+
+            {/* Direct Number Input */}
+            <div className="flex-1 relative">
+              <input
+                type="number"
+                step="0.1"
+                value={profile.currentWeightKg}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  if (!isNaN(val) && val >= 30 && val <= 250) {
+                    onUpdateProfile({ currentWeightKg: val });
+                  }
+                }}
+                className="w-full bg-[#181c22] text-[#dfe2eb] font-mono text-[18px] font-bold py-1.5 px-3 rounded-xl border border-[#3c4a3d] focus:outline-none focus:border-[#10e575] text-center"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[11px] text-[#859585] pointer-events-none">
+                kg
+              </span>
+            </div>
+
+            {/* Increment buttons */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = parseFloat((profile.currentWeightKg + 0.1).toFixed(1));
+                onUpdateProfile({ currentWeightKg: next });
+              }}
+              className="w-9 h-9 rounded-xl bg-[#181c22] hover:bg-[#262a31] text-[#dfe2eb] font-mono text-[12px] font-bold border border-[#3c4a3d]/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              title="+0.1 kg"
+            >
+              +0.1
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const next = parseFloat((profile.currentWeightKg + 0.5).toFixed(1));
+                onUpdateProfile({ currentWeightKg: next });
+              }}
+              className="w-9 h-9 rounded-xl bg-[#181c22] hover:bg-[#262a31] text-[#dfe2eb] font-mono text-[12px] font-bold border border-[#3c4a3d]/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              title="+0.5 kg"
+            >
+              +0.5
+            </button>
+          </div>
+
+          {/* Quick Log Confirmation Button */}
+          <button
+            type="button"
+            onClick={() => {
+              onUpdateProfile({ xpPoints: profile.xpPoints + 50 });
+              confetti({
+                particleCount: 50,
+                spread: 60,
+                colors: ['#10e575', '#c3f400', '#ffffff'],
+              });
+            }}
+            className="w-full py-2 rounded-xl bg-[#10e575] hover:bg-[#6fff9a] text-[#003918] font-mono text-[11px] font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+          >
+            <span className="material-symbols-outlined text-[15px]">check</span>
+            <span>Confirm Today's Weigh-In (+50 XP)</span>
+          </button>
+        </div>
+
+        {/* Milestone Progress Bar */}
+        <div className="space-y-1 pt-1">
+          <div className="w-full h-2.5 bg-[#0a0e14] rounded-full overflow-hidden border border-[#3c4a3d]/40 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-[#10e575] to-[#c3f400] transition-all duration-500"
-              style={{ width: `${Math.min(100, deficitMetPercent)}%` }}
+              className="h-full rounded-full bg-gradient-to-r from-[#10e575] via-[#6fff9a] to-[#c3f400] transition-all duration-500"
+              style={{
+                width: `${Math.min(
+                  100,
+                  Math.max(
+                    0,
+                    Math.round(
+                      ((profile.startingWeightKg - profile.currentWeightKg) /
+                        (profile.startingWeightKg - profile.targetWeightKg)) *
+                        100
+                    )
+                  )
+                )}%`,
+              }}
             ></div>
           </div>
-          <div className="flex items-center justify-between text-[10px] font-mono text-[#bacbb9]">
-            <span>Base Metabolic Rate: {profile.dailyBasalMetabolicRate} kcal</span>
-            <span>Weight Loss Pace: -0.5 kg/week</span>
+          <div className="flex items-center justify-between text-[10px] font-mono text-[#859585]">
+            <span>Start: {profile.startingWeightKg}kg</span>
+            <span className="text-[#dfe2eb] font-bold">Now: {profile.currentWeightKg}kg</span>
+            <span className="text-[#c3f400] font-bold">Goal: {profile.targetWeightKg}kg</span>
           </div>
         </div>
       </div>
