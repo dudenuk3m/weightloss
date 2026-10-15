@@ -1,11 +1,10 @@
 import React from 'react';
 
-export type NavTab = 'today' | 'trainers' | 'challenges' | 'progress' | 'sg-sync';
+export type NavTab = 'today' | 'run';
 
 interface BottomNavProps {
   currentTab: NavTab;
   onTabChange: (tab: NavTab) => void;
-  onOpenScan?: () => void;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
@@ -13,115 +12,77 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onTabChange,
 }) => {
   return (
-    <nav className="fixed bottom-0 w-full z-40 pb-safe bg-[#10141a]/90 backdrop-blur-xl border-t border-[#3c4a3d]/30 shadow-[0_-2px_16px_rgba(0,0,0,0.5)]">
-      <div className="flex justify-between items-center h-20 px-2 max-w-lg mx-auto relative">
-        {/* Today Tab */}
+    <nav className="fixed bottom-0 w-full z-40 pb-safe bg-[#10141a]/95 backdrop-blur-xl border-t border-[#3c4a3d]/40 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+      <div className="flex justify-around items-center h-20 px-6 max-w-md mx-auto relative">
+        {/* Tab 1: Today (Weight) */}
         <button
+          type="button"
           onClick={() => onTabChange('today')}
-          className={`group flex-1 flex flex-col items-center justify-center min-h-[44px] min-w-[44px] py-1 transition-colors ${
+          className={`flex-1 flex flex-col items-center justify-center py-2 transition-all cursor-pointer group ${
             currentTab === 'today'
-              ? 'text-[#6fff9a]'
-              : 'text-[#bacbb9] hover:text-[#dfe2eb]'
+              ? 'text-[#10e575]'
+              : 'text-[#859585] hover:text-[#dfe2eb]'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">
-            dashboard
-          </span>
+          <div
+            className={`w-12 h-8 rounded-full flex items-center justify-center transition-all ${
+              currentTab === 'today'
+                ? 'bg-[#10e575]/15 text-[#10e575]'
+                : 'text-[#859585] group-hover:text-[#dfe2eb]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[24px]">
+              monitor_weight
+            </span>
+          </div>
           <span
-            className={`font-mono text-[10px] uppercase tracking-wider font-semibold mt-1 transition-colors ${
-              currentTab === 'today' ? 'text-[#6fff9a]' : 'text-[#bacbb9]'
+            className={`font-mono text-[11px] uppercase tracking-wider font-bold mt-0.5 transition-colors ${
+              currentTab === 'today' ? 'text-[#10e575]' : 'text-[#859585]'
             }`}
           >
             Today
           </span>
           <span
-            className={`w-1 h-1 rounded-full bg-[#6fff9a] mt-0.5 transition-opacity ${
-              currentTab === 'today' ? 'opacity-100' : 'opacity-0'
+            className={`w-1.5 h-1.5 rounded-full bg-[#10e575] mt-0.5 transition-all duration-300 ${
+              currentTab === 'today' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
           />
         </button>
 
-        {/* Trainers Tab */}
+        {/* Center Divider */}
+        <div className="w-px h-8 bg-[#3c4a3d]/40" />
+
+        {/* Tab 2: Run (Weather, PM2.5, Log Run) */}
         <button
-          onClick={() => onTabChange('trainers')}
-          className={`group flex-1 flex flex-col items-center justify-center min-h-[44px] min-w-[44px] py-1 transition-colors ${
-            currentTab === 'trainers'
-              ? 'text-[#6fff9a]'
-              : 'text-[#bacbb9] hover:text-[#dfe2eb]'
+          type="button"
+          onClick={() => onTabChange('run')}
+          className={`flex-1 flex flex-col items-center justify-center py-2 transition-all cursor-pointer group ${
+            currentTab === 'run'
+              ? 'text-[#c3f400]'
+              : 'text-[#859585] hover:text-[#dfe2eb]'
           }`}
         >
-          <span className="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">
-            sports_gymnastics
-          </span>
-          <span
-            className={`font-mono text-[10px] uppercase tracking-wider font-semibold mt-1 transition-colors ${
-              currentTab === 'trainers' ? 'text-[#6fff9a]' : 'text-[#bacbb9]'
+          <div
+            className={`w-12 h-8 rounded-full flex items-center justify-center transition-all ${
+              currentTab === 'run'
+                ? 'bg-[#c3f400]/15 text-[#c3f400]'
+                : 'text-[#859585] group-hover:text-[#dfe2eb]'
             }`}
           >
-            Trainers
-          </span>
-          <span
-            className={`w-1 h-1 rounded-full bg-[#6fff9a] mt-0.5 transition-opacity ${
-              currentTab === 'trainers' ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        </button>
-
-
-        {/* SG Sports Deficit Sync / Challenges */}
-        <button
-          onClick={() => onTabChange('sg-sync')}
-          className={`group flex-1 flex flex-col items-center justify-center min-h-[44px] min-w-[44px] py-1 transition-colors ${
-            currentTab === 'sg-sync'
-              ? 'text-[#c3f400]'
-              : 'text-[#bacbb9] hover:text-[#dfe2eb]'
-          }`}
-          title="Singapore Sports Weight Loss Deficit Sync"
-        >
-          <div className="relative">
-            <span className="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">
-              sync_saved_locally
-            </span>
-            <span className="absolute -top-1 -right-2 text-[8px] font-mono px-1 rounded bg-[#c3f400] text-[#161e00] font-bold">
-              SG
+            <span className="material-symbols-outlined text-[24px]">
+              directions_run
             </span>
           </div>
           <span
-            className={`font-mono text-[10px] uppercase tracking-wider font-semibold mt-1 transition-colors ${
-              currentTab === 'sg-sync' ? 'text-[#c3f400]' : 'text-[#bacbb9]'
+            className={`font-mono text-[11px] uppercase tracking-wider font-bold mt-0.5 transition-colors ${
+              currentTab === 'run' ? 'text-[#c3f400]' : 'text-[#859585]'
             }`}
           >
-            SG Sports
+            Run
           </span>
           <span
-            className={`w-1 h-1 rounded-full bg-[#c3f400] mt-0.5 transition-opacity ${
-              currentTab === 'sg-sync' ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        </button>
-
-        {/* Progress Tab */}
-        <button
-          onClick={() => onTabChange('progress')}
-          className={`group flex-1 flex flex-col items-center justify-center min-h-[44px] min-w-[44px] py-1 transition-colors ${
-            currentTab === 'progress'
-              ? 'text-[#6fff9a]'
-              : 'text-[#bacbb9] hover:text-[#dfe2eb]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[22px] transition-transform group-hover:scale-110">
-            monitoring
-          </span>
-          <span
-            className={`font-mono text-[10px] uppercase tracking-wider font-semibold mt-1 transition-colors ${
-              currentTab === 'progress' ? 'text-[#6fff9a]' : 'text-[#bacbb9]'
-            }`}
-          >
-            Progress
-          </span>
-          <span
-            className={`w-1 h-1 rounded-full bg-[#6fff9a] mt-0.5 transition-opacity ${
-              currentTab === 'progress' ? 'opacity-100' : 'opacity-0'
+            className={`w-1.5 h-1.5 rounded-full bg-[#c3f400] mt-0.5 transition-all duration-300 ${
+              currentTab === 'run' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
           />
         </button>
@@ -129,3 +90,5 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     </nav>
   );
 };
+
+export default BottomNav;
