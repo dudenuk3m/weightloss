@@ -1,0 +1,6 @@
+{
+  "name": "PulseAI - Singapore Fitness & Weight Loss Telemetry",
+  "description": "Biometrically matched elite coaching and weight loss tracking synced with top Singapore sports trends.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
