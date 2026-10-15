@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BottomNav, NavTab } from './components/BottomNav';
-import { TodayScreen } from './components/TodayScreen';
+import { WeightScreen } from './components/WeightScreen';
 import { RunScreen } from './components/RunScreen';
 import { AirQualityPM25Modal } from './components/AirQualityPM25Modal';
 import { TwoHourForecastModal } from './components/TwoHourForecastModal';
 import { LiveWeatherBackground, WeatherConditionType } from './components/LiveWeatherBackground';
 
 export default function App() {
-  // Only 2 tabs: 'today' (Weight Today) and 'run' (Weather, PM2.5, Log Run)
-  const [currentTab, setCurrentTab] = useState<NavTab>('today');
+  // Exactly 2 tabs: 'weight' (Today's WEIGHT) and 'run' (Today's RUN - Weather, PM2.5, Log Run)
+  const [currentTab, setCurrentTab] = useState<NavTab>('weight');
 
   // Real-time weather archetype for floating clouds app background
   const [weatherType, setWeatherType] = useState<WeatherConditionType>('cloudy');
@@ -49,10 +49,10 @@ export default function App() {
         onUpdateTarget={(newTarget) => setTargetWeightKg(newTarget)}
       />
 
-      {/* Main View Router (Exactly 2 Tabs: Today & Run) */}
+      {/* Main View Router (Exactly 2 Tabs: Weight & Run) */}
       <main className="flex-1 flex flex-col relative w-full pt-20 pb-4 z-10">
-        {currentTab === 'today' && (
-          <TodayScreen
+        {currentTab === 'weight' && (
+          <WeightScreen
             currentWeightKg={currentWeightKg}
             targetWeightKg={targetWeightKg}
             startingWeightKg={startingWeightKg}

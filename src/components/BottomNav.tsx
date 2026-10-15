@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type NavTab = 'today' | 'run';
+export type NavTab = 'weight' | 'run';
 
 interface BottomNavProps {
   currentTab: NavTab;
@@ -14,19 +14,19 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav className="fixed bottom-0 w-full z-40 pb-safe bg-[#10141a]/95 backdrop-blur-xl border-t border-[#3c4a3d]/40 shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
       <div className="flex justify-around items-center h-20 px-6 max-w-md mx-auto relative">
-        {/* Tab 1: Today (Weight) */}
+        {/* Tab 1: Weight (Today's Weight) */}
         <button
           type="button"
-          onClick={() => onTabChange('today')}
+          onClick={() => onTabChange('weight')}
           className={`flex-1 flex flex-col items-center justify-center py-2 transition-all cursor-pointer group ${
-            currentTab === 'today'
+            currentTab === 'weight'
               ? 'text-[#10e575]'
               : 'text-[#859585] hover:text-[#dfe2eb]'
           }`}
         >
           <div
             className={`w-12 h-8 rounded-full flex items-center justify-center transition-all ${
-              currentTab === 'today'
+              currentTab === 'weight'
                 ? 'bg-[#10e575]/15 text-[#10e575]'
                 : 'text-[#859585] group-hover:text-[#dfe2eb]'
             }`}
@@ -37,14 +37,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           </div>
           <span
             className={`font-mono text-[11px] uppercase tracking-wider font-bold mt-0.5 transition-colors ${
-              currentTab === 'today' ? 'text-[#10e575]' : 'text-[#859585]'
+              currentTab === 'weight' ? 'text-[#10e575]' : 'text-[#859585]'
             }`}
           >
-            Today
+            Weight
           </span>
           <span
             className={`w-1.5 h-1.5 rounded-full bg-[#10e575] mt-0.5 transition-all duration-300 ${
-              currentTab === 'today' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+              currentTab === 'weight' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
           />
         </button>

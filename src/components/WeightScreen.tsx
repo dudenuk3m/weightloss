@@ -18,7 +18,7 @@ export interface WeightRecord {
   weight: number;
 }
 
-interface TodayScreenProps {
+interface WeightScreenProps {
   currentWeightKg: number;
   targetWeightKg: number;
   startingWeightKg: number;
@@ -26,7 +26,7 @@ interface TodayScreenProps {
   onUpdateTarget?: (newTarget: number) => void;
 }
 
-export const TodayScreen: React.FC<TodayScreenProps> = ({
+export const WeightScreen: React.FC<WeightScreenProps> = ({
   currentWeightKg,
   targetWeightKg,
   startingWeightKg,
@@ -112,7 +112,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
             Today's Weigh-In
           </span>
           <h1 className="font-sans text-[26px] font-bold text-[#dfe2eb] tracking-tight">
-            Weight Today
+            Today's WEIGHT
           </h1>
         </div>
 
@@ -406,4 +406,5 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
   );
 };
 
-export default TodayScreen;
+export const TodayScreen = WeightScreen;
+export default WeightScreen;
