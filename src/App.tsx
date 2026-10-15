@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BottomNav, NavTab } from './components/BottomNav';
 import { TrainersScreen } from './components/TrainersScreen';
@@ -13,11 +13,25 @@ import { ProfileModal } from './components/ProfileModal';
 import { LogSportModal } from './components/LogSportModal';
 import { AirQualityPM25Modal } from './components/AirQualityPM25Modal';
 import { TwoHourForecastModal } from './components/TwoHourForecastModal';
+import { LiveWeatherBackground, WeatherConditionType } from './components/LiveWeatherBackground';
 import { Coach, SingaporeSport, WeightLossProfile, WorkoutLogEntry } from './types';
 import { COACHES_DATA } from './data/coachesData';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<NavTab>('today');
+  const [weatherType, setWeatherType] = useState<WeatherConditionType>('cloudy');
+
+  // Fetch real-time Singapore weather to sync global floating clouds
+  useEffect(() => {
+    fetch('/api/two-hr-forecast')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.weatherType) {
+          setWeatherType(json.weatherType);
+        }
+      })
+      .catch((err) => console.error('Error fetching live weather in App:', err));
+  }, []);
 
   // Initial user weight loss and biometric telemetry profile
   const [profile, setProfile] = useState<WeightLossProfile>({
@@ -115,7 +129,12 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#10141a] text-[#dfe2eb] min-h-screen flex flex-col antialiased selection:bg-[#6fff9a] selection:text-[#003918]">
+    <div className="relative min-h-screen flex flex-col text-[#dfe2eb] antialiased selection:bg-[#6fff9a] selection:text-[#003918]">
+      {/* Global Live Weather & Floating Clouds Full-Screen Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <LiveWeatherBackground weatherType={weatherType} isGlobalApp={true} />
+      </div>
+
       {/* Toast Notification */}
       {bookingToast && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md bg-[#161e00] border border-[#6fff9a] text-[#6fff9a] px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between animate-bounce">
@@ -137,7 +156,7 @@ export default function App() {
       />
 
       {/* Main View Router */}
-      <main className="flex-1 flex flex-col relative w-full pt-20 pb-4 bg-[#10141a]">
+      <main className="flex-1 flex flex-col relative w-full pt-20 pb-4 z-10">
         {currentTab === 'trainers' && (
           <TrainersScreen
             profile={profile}
@@ -246,6 +265,8 @@ export default function App() {
       <TwoHourForecastModal
         isOpen={isWeatherModalOpen}
         onClose={() => setIsWeatherModalOpen(false)}
+        appWeatherType={weatherType}
+        onSelectAppWeather={(type) => setWeatherType(type)}
       />
     </div>
   );

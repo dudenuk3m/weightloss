@@ -81,3 +81,49 @@
     opacity: 0;
   }
 }
+
+/* Floating Clouds Hardware-Accelerated Animations */
+@keyframes cloudDriftLayer1 {
+  0% {
+    transform: translate3d(-420px, 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 420px), 0, 0);
+  }
+}
+
+@keyframes cloudDriftLayer2 {
+  0% {
+    transform: translate3d(-480px, 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 480px), 0, 0);
+  }
+}
+
+@keyframes cloudDriftLayer3 {
+  0% {
+    transform: translate3d(-360px, 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 360px), 0, 0);
+  }
+}
+
+@keyframes cloudBobbing {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes cloudBobbingAlt {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(12px);
+  }
+}

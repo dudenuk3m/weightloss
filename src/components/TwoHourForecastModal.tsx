@@ -5,11 +5,15 @@ import { TwoHrForecastResponse, WeatherForecastItem } from './LiveWeatherCard';
 interface TwoHourForecastModalProps {
   isOpen: boolean;
   onClose: () => void;
+  appWeatherType?: WeatherConditionType;
+  onSelectAppWeather?: (weather: WeatherConditionType) => void;
 }
 
 export const TwoHourForecastModal: React.FC<TwoHourForecastModalProps> = ({
   isOpen,
   onClose,
+  appWeatherType,
+  onSelectAppWeather,
 }) => {
   const [data, setData] = useState<TwoHrForecastResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -154,15 +158,21 @@ export const TwoHourForecastModal: React.FC<TwoHourForecastModalProps> = ({
           </div>
 
           {/* Graphic Background Theme / Weather Switcher */}
-          <div className="p-3 rounded-2xl bg-[#181c22]/80 border border-[#3c4a3d]/60 backdrop-blur-md space-y-1.5">
+          <div className="p-3 rounded-2xl bg-[#181c22]/80 border border-[#3c4a3d]/60 backdrop-blur-md space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-[#859585] uppercase">
+              <span className="text-[10px] font-mono text-[#859585] uppercase flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10e575] animate-ping" />
                 Live Graphic Canvas Mode:
               </span>
               {previewCondition && (
                 <button
-                  onClick={() => setPreviewCondition(null)}
-                  className="font-mono text-[9px] text-[#c3f400] underline"
+                  onClick={() => {
+                    setPreviewCondition(null);
+                    if (data?.weatherType && onSelectAppWeather) {
+                      onSelectAppWeather(data.weatherType);
+                    }
+                  }}
+                  className="font-mono text-[9px] text-[#c3f400] underline cursor-pointer"
                 >
                   Reset to Live ({data?.weatherType})
                 </button>
@@ -177,10 +187,13 @@ export const TwoHourForecastModal: React.FC<TwoHourForecastModalProps> = ({
               ].map((w) => (
                 <button
                   key={w.type}
-                  onClick={() => setPreviewCondition(w.type)}
-                  className={`py-1.5 rounded-xl font-mono text-[10px] font-bold flex items-center justify-center gap-1 transition-all ${
+                  onClick={() => {
+                    setPreviewCondition(w.type);
+                    onSelectAppWeather?.(w.type);
+                  }}
+                  className={`py-1.5 rounded-xl font-mono text-[10px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer ${
                     activeWeatherType === w.type
-                      ? 'bg-[#10e575] text-[#003918] shadow-md'
+                      ? 'bg-[#10e575] text-[#003918] shadow-md scale-102'
                       : 'bg-[#10141a] text-[#bacbb9] hover:text-[#dfe2eb] border border-[#3c4a3d]/50'
                   }`}
                 >
@@ -188,6 +201,10 @@ export const TwoHourForecastModal: React.FC<TwoHourForecastModalProps> = ({
                   <span>{w.label}</span>
                 </button>
               ))}
+            </div>
+            <div className="flex items-center gap-1.5 text-[9px] font-mono text-[#6fff9a] bg-[#0a0e14]/60 px-2 py-1 rounded-lg border border-[#3c4a3d]/40">
+              <span className="material-symbols-outlined text-[12px] text-[#6fff9a]">cloud</span>
+              <span>Floating clouds active on app background &amp; weather forecast</span>
             </div>
           </div>
 
