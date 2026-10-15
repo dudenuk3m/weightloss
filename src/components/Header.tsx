@@ -14,13 +14,13 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile, onOpenSg
         {/* Brand Logo & Name */}
         <div className="flex items-center gap-2">
           <img
-            alt="PulseAI Logo"
-            className="h-8 w-auto object-contain"
-            src="https://lh3.googleusercontent.com/aida/AEtjO1WmmUNlrY7QQg7TTg5l7vd27UsMJIYov1hqKX1ykUBL6TZo-gLZEIZWH75pggtinmh_tWDJKuDj6ZIQQZ60nCLBkjwAh3hq1H0ZQ8w3aGqRi2PgKYQUFaCCp_-dMjKpxS0Dp9GqUVGsW7G6p0LlFcvfoaCoSe7KJ5FTN6CUGhU3hOHFMRRepAScu1bpp0vqPcPa_7bBWboUJDgt0jP2ii2F53mpwu24BQuSU-V_OywDT0CJ0Nc7FulkMg"
+            alt="Weight X Run Shoe Logo"
+            className="w-8 h-8 rounded-xl object-contain bg-gradient-to-tr from-[#10e575] to-[#c3f400] p-1.5 shadow-[0_0_14px_rgba(16,229,117,0.45)] shrink-0"
+            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23003918'><path d='M2 17.5c0-.83.67-1.5 1.5-1.5h1.2l2.3-3.1c.5-.7 1.3-1.1 2.2-1.1h3.3l.8-1.5c.37-.7 1.1-1.2 1.9-1.2h2c.8 0 1.5.4 1.8 1.1l1.7 3.3c.4.8.4 1.7 0 2.5l-.8 1.5h1.9c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H3.5C2.67 20.5 2 19.83 2 19v-1.5zm6.5-4.2l-1.5 2.2h4.5l-.5-1.1c-.2-.4-.6-.7-1.1-.7H8.5zm6.1-.8h-1.8l.5 1h2.2l-.9-1z'/></svg>"
           />
           <div className="flex flex-col">
-            <span className="font-sans text-[18px] font-bold tracking-tight text-[#dfe2eb] leading-tight">
-              PulseAI
+            <span className="font-sans text-[18px] font-bold tracking-tight text-[#dfe2eb] leading-tight flex items-center gap-1">
+              Weight <span className="text-[#c3f400]">X</span> Run
             </span>
             <span className="text-[9px] font-mono text-[#6fff9a] font-semibold tracking-wider uppercase">
               Singapore Telemetry
