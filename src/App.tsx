@@ -12,6 +12,7 @@ import { PremiumModal } from './components/PremiumModal';
 import { ProfileModal } from './components/ProfileModal';
 import { LogSportModal } from './components/LogSportModal';
 import { AirQualityPM25Modal } from './components/AirQualityPM25Modal';
+import { TwoHourForecastModal } from './components/TwoHourForecastModal';
 import { Coach, SingaporeSport, WeightLossProfile, WorkoutLogEntry } from './types';
 import { COACHES_DATA } from './data/coachesData';
 
@@ -74,6 +75,7 @@ export default function App() {
   const [isPremiumOpen, setIsPremiumOpen] = useState(false);
   const [isLogSportOpen, setIsLogSportOpen] = useState(false);
   const [isAirQualityOpen, setIsAirQualityOpen] = useState(false);
+  const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
   const [selectedSportForLogging, setSelectedSportForLogging] = useState<SingaporeSport | undefined>();
   const [selectedCoachForBooking, setSelectedCoachForBooking] = useState<Coach | null>(null);
 
@@ -164,6 +166,7 @@ export default function App() {
             onOpenBookCoach={() => handleSelectCoach(COACHES_DATA[0])}
             onOpenLogSport={() => handleOpenLogModal()}
             onOpenAirQuality={() => setIsAirQualityOpen(true)}
+            onOpenWeatherModal={() => setIsWeatherModalOpen(true)}
             onUpdateProfile={handleUpdateProfile}
           />
         )}
@@ -233,10 +236,16 @@ export default function App() {
         onUpdateProfile={handleUpdateProfile}
       />
 
-      {/* Singapore Air Quality PM2.5 & LTA Transit Modal */}
+      {/* Singapore Air Quality PM2.5 Modal */}
       <AirQualityPM25Modal
         isOpen={isAirQualityOpen}
         onClose={() => setIsAirQualityOpen(false)}
+      />
+
+      {/* Singapore 2-Hour Weather Forecast & Live Graphic Background Modal */}
+      <TwoHourForecastModal
+        isOpen={isWeatherModalOpen}
+        onClose={() => setIsWeatherModalOpen(false)}
       />
     </div>
   );

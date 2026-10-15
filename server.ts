@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { handleHealthCheck } from './api/health.ts';
 import { handlePM25 } from './api/pm25.ts';
 import { handleBusArrival } from './api/busarrival.ts';
+import { handleTwoHrForecast } from './api/two-hr-forecast.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,7 @@ async function startServer() {
   app.get('/api/health', handleHealthCheck);
   app.get('/api/pm25', handlePM25);
   app.get('/api/busarrival', handleBusArrival);
+  app.get('/api/two-hr-forecast', handleTwoHrForecast);
 
   if (!isProduction) {
     // Mount Vite dev server middlewares

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { WeightLossProfile } from '../types';
 import { calculateFatLossGrams } from '../data/singaporeSportsData';
 import confetti from 'canvas-confetti';
+import { LiveWeatherCard } from './LiveWeatherCard';
 
 interface TodayScreenProps {
   profile: WeightLossProfile;
@@ -10,6 +11,7 @@ interface TodayScreenProps {
   onOpenBookCoach: () => void;
   onOpenLogSport: () => void;
   onOpenAirQuality: () => void;
+  onOpenWeatherModal: () => void;
   onUpdateProfile: (updated: Partial<WeightLossProfile>) => void;
 }
 
@@ -20,6 +22,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
   onOpenBookCoach,
   onOpenLogSport,
   onOpenAirQuality,
+  onOpenWeatherModal,
   onUpdateProfile,
 }) => {
   // Live PM2.5 Run Safety Telemetry State
@@ -79,7 +82,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
             Singapore Active Telemetry
           </span>
           <h1 className="font-sans text-[24px] font-bold text-[#dfe2eb] tracking-tight">
-            Today's Metabolic HUD
+            Today's RUN
           </h1>
         </div>
         <button
@@ -148,6 +151,9 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({
           <span className="material-symbols-outlined">chevron_right</span>
         </div>
       </div>
+
+      {/* Real-time 2-Hour Weather Forecast Card with Live Animated Graphic Background */}
+      <LiveWeatherCard onOpenDetailedForecast={onOpenWeatherModal} />
 
       {/* Interactive Weight Logger Card (Replaces Deficit HUD) */}
       <div className="relative w-full rounded-2xl bg-gradient-to-b from-[#1c2026] via-[#181c22] to-[#10141a] p-4 shadow-xl border border-[#3c4a3d]/70 overflow-hidden space-y-3">
